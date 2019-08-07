@@ -1,0 +1,4 @@
+---
+# handlers file for nfsserver
+- name: "Reload NFS"
+  command: exportfs -a

@@ -1,0 +1,6 @@
+---
+# vars file for glusterfs
+gluster_ports:
+  - { port: '', description: '', configs: ''}
+  - { port: '', description: '', configs: ''}
+  - { port: '', description: '', configs: ''}

@@ -1,0 +1,4 @@
+---
+- name: infrastructure deployment
+  roles:
+  - glusterfs

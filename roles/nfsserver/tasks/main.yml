@@ -1,0 +1,72 @@
+---
+
+- name: 'Ensure everything is up-to-date'
+  package:
+    name: '*'
+    state: latest
+
+- name: 'Install required packages'
+  package:
+    name: '{{ item }}'
+    state: installed
+  with_items:
+  - nfs-utils
+  - lvm2
+  - firewalld
+  - python-firewall
+
+- name: 'Ensure firewalld is running'
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+
+- name: 'Ensure nfs-server is running'
+  service:
+    name: nfs-server
+    state: started
+    enabled: yes
+
+- name: 'Open Firewall for NFS use'
+  firewalld:
+    port: "{{ item }}"
+    permanent: yes
+    state: enabled
+    immediate: yes
+  with_items:
+  - 111/tcp
+  - 111/udp
+  - 2049/tcp
+  - 2049/udp
+
+- name: "Check if LV has been created and mounted"
+  shell: "lsblk {{ nfs_storage_device }} | egrep 'lvm.*/exports'"
+  register: lvm_check
+  ignore_errors: yes
+
+- include_tasks: configure_lvm.yml
+  when: lvm_check.rc != 0
+
+- name: "Set share basedir"
+  set_fact:
+    nfs_share_basedir: "{{ nfs_share_basedir | default(default_nfs_share_basedir) }}"
+
+- name: "Create directories"
+  file:
+    path: "{{ nfs_share_basedir }}/{{ item.name }}"
+    state: directory
+    owner: "{{ item.nfs_owner | default(default_nfs_owner) }}"
+    group: "{{ item.nfs_group | default(default_nfs_group) }}"
+    mode: "{{ item.nfs_mode | default(default_nfs_mode) }}"
+  with_items:
+  - "{{ nfs_shares }}"
+
+- name: "Update export file to share out the directory"
+  lineinfile:
+    path: /etc/exports
+    state: present
+    regexp: "^{{ nfs_share_basedir }}/{{ item.name }}"
+    line: "{{ nfs_share_basedir }}/{{ item.name }} *({{ item.nfs_share_options | default(default_nfs_share_options) }})"
+  with_items:
+  - "{{ nfs_shares }}"
+  notify: Reload NFS

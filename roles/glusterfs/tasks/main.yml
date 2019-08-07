@@ -1,0 +1,9 @@
+---
+# tasks file for glusterfs
+- name: open ports for glusterfs
+  firewalld:
+    port: {{ item.port }}
+    permanent: yes
+    state: enabled
+  loop: gluster_ports
+  tags: gluster

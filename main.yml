@@ -1,4 +1,4 @@
 ---
 - name: infrastructure deployment
   roles:
-  - glusterfs
+  - tower

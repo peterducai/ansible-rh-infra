@@ -1,4 +1,4 @@
 ---
-- name: infrastructure deployment
+- hosts: tower
   roles:
   - tower

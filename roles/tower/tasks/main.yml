@@ -1,2 +1,12 @@
 ---
-# tasks file for tower
+- name: download Tower installer
+  get_url:
+    url: "{{ tower_installer_url }}{{ tower_installer }}"
+    dest: "/tmp/{{ tower_installer }}"
+    validate_certs: no
+    # checksum: "8c8e872cb3c9a5db42b2b6ba9ccc34d27017c073"
+
+- name: unzip installer
+  unarchive:
+    src: "/tmp/{{ tower_installer }}"
+    dest: "/tmp"

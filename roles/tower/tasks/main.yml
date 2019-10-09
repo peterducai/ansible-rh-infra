@@ -10,3 +10,7 @@
   unarchive:
     src: "/tmp/{{ tower_installer }}"
     dest: "/tmp"
+
+- name: edit config
+  lineinfile:
+      dest: sdkfj

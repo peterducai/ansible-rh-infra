@@ -1,0 +1,26 @@
+---
+- name: download images
+  podman_image:
+    name: "{{ item }}"
+    username: "{{ registry_user }}"
+    password: "{{ registry_password }}"
+  loop:
+    - docker.io/library/postgres                              
+    - docker.io/library/centos                                
+    - docker.io/library/fedora                                
+    - docker.io/library/traefik                               
+    - docker.io/library/golang                                
+    - registry.redhat.io/rhel8/go-toolset                     
+    - registry.redhat.io/rhel8/llvm-toolset                   
+    - registry.redhat.io/rhel8/nodejs-10                      
+    - docker.io/library/nginx                                 
+    - registry.redhat.io/openshift4/ose-ansible-operator      
+    - registry.redhat.io/rhscl/devtoolset-8-toolchain-rhel7   
+    - registry.redhat.io/ansible-tower-35/ansible-tower       
+    - registry.redhat.io/rhel8/postgresql-10                  
+    - registry.redhat.io/ubi8/ubi-init                        
+    - registry.redhat.io/ubi8/ubi                             
+    - registry.redhat.io/ubi8                                 
+    - registry.redhat.io/ubi8-minimal                         
+    - registry.redhat.io/ansible-runner-12/ansible-runner     
+    

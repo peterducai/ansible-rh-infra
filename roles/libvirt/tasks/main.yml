@@ -1,0 +1,30 @@
+---
+- name: include vars
+  include_vars: rhn_creds.yml
+
+# - name: Same as above but subscribe to a specific pool by ID.
+#   redhat_subscription:
+#     state: present
+#     username: joe_user
+#     password: somepass
+#     pool_ids: 0123456789abcdef0123456789abcdef
+
+# - name: Download images
+#   get_url:
+#     url: "{{ item }}"
+#     dest: "/tmp/{{ item }}"
+#     username: "{{ rhn_user }}"
+#     password: "{{ rhn_pass }}"
+#   loop:
+#     - https://access.cdn.redhat.com/content/origin/files/sha256/bb/bb21783a9b1c7427019f87b39475105988d17a7cde9da582c370521678f8efb1/rhel-8.0-update-0-x86_64-kvm.qcow2
+#     #- http://isoredirect.centos.org/centos/8/isos/x86_64/CentOS-8-x86_64-1905-dvd1.iso
+#   delegate_to: localhost
+
+# - name: push base vm image to hypervisor
+#   copy:
+#     src: "/tmp/{{ source_image_file }}"
+#     dest: "{{ libvirt_image_dir }}/{{ source_image_file }}"
+#     owner: qemu
+#     group: qemu
+#     mode: u=rw,g=r,o=r
+

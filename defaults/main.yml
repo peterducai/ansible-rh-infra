@@ -1,0 +1,3 @@
+
+deployment_type: libvirt
+base_os_image: rhel-8.0-x86_64-dvd.iso

@@ -1,0 +1,2 @@
+---
+libvirt_image_dir: "/var/lib/libvirt/images"

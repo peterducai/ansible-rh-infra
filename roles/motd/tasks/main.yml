@@ -1,0 +1,6 @@
+---
+- name: set motd
+  template: 
+    src: motd.j2 
+    dest: /etc/motd
+  when: set_motd == True

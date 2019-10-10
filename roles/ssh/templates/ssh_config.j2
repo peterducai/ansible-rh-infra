@@ -1,0 +1,51 @@
+# ensures that when we do `ssh labhost` it's run either against the VPN gateway or the WAN.
+{% if openvpn_gateway is defined %}
+Match exec \"[[ '%h' == 'labhost' ]] && timeout 1 nc -z {{ openvpn_gateway }} %p\"
+  HostName {{ openvpn_gateway }}
+{% endif %}
+Match exec \"[[ '%h' == 'labhost' ]] && timeout 3 nc -z {{ labhost_wan_address }} %p\"
+  Hostname {{ labhost_wan_address }}
+Match exec \"[[ '%h' == 'labhost' ]]\"
+  ProxyCommand bash -c 'printf \"Could not reach labhost on either VPN or WAN\\n\" >&2'
+
+Host labhost
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+  {% if inv_priv_key_path is not none %}
+  IdentityFile {{ inv_priv_key_path }}
+  {% endif %}
+  {% if lab_user is not none %}
+  User {{ lab_user }}
+  {% endif %}
+  ServerAliveInterval 60
+  ServerAliveCountMax 10
+  PasswordAuthentication no
+
+
+Host {{ labhost_wan_address }}
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+  {% if inv_priv_key_path is not none %}
+  IdentityFile {{ inv_priv_key_path }}
+  {% endif %}
+  {% if lab_user is not none %}
+  User {{ lab_user }}
+  {% endif %}
+  ServerAliveInterval 60
+  ServerAliveCountMax 10
+
+# Ensures that all ssh connections to a Lab VM 
+# will first be tested directly (VPN) and failover
+# to jump via the labhost
+Host *.{{ domain }}
+  ProxyCommand bash -c '(timeout 1 nc -z %h %p) && nc %h %p || printf "direct connection (vpn) not available \\ntrying jump to labhost instead\\n" >&2 && ssh -W %h:%p {{ labhost_wan_address }}'
+  {% if inv_priv_key_path is not none %}
+  IdentityFile {{ inv_priv_key_path }}
+  {% endif %}
+  {% if lab_user is not none %}
+  User {{ lab_user }}
+  {% endif %}
+  StrictHostKeyChecking no
+  UserKnownHostsFile /dev/null
+  ServerAliveInterval 60
+  ServerAliveCountMax 10

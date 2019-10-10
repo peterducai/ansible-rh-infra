@@ -1,7 +1,7 @@
 ---
 - name: download Tower installer
   get_url:
-    url: "{{ tower_installer_url }}{{ tower_installer }}"
+    url: "{{ tower_installer_url }}{{ tower_installer }}.tar.gz"
     dest: "/tmp/{{ tower_installer }}"
     validate_certs: no
     # checksum: "8c8e872cb3c9a5db42b2b6ba9ccc34d27017c073"
@@ -14,3 +14,6 @@
 - name: edit config
   lineinfile:
       dest: sdkfj
+
+- name: install Tower
+  shell: "exec /tmp/{{ tower_installer }}/bin/setup.sh"

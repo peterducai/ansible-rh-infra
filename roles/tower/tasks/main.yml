@@ -1,19 +1,37 @@
 ---
+- name: INFO
+  debug:
+    msg: "{{ tower_installer_url }}{{ tower_installer }}.tar.gz"
+
 - name: download Tower installer
   get_url:
     url: "{{ tower_installer_url }}{{ tower_installer }}.tar.gz"
-    dest: "/tmp/{{ tower_installer }}"
+    dest: "/tmp/{{ tower_installer }}.tar.gz"
     validate_certs: no
     # checksum: "8c8e872cb3c9a5db42b2b6ba9ccc34d27017c073"
 
 - name: unzip installer
   unarchive:
-    src: "/tmp/{{ tower_installer }}"
+    src: "/tmp/{{ tower_installer }}.tar.gz"
     dest: "/tmp"
+    mode: 0644
+    remote_src: yes
 
 - name: edit config
   lineinfile:
-      dest: sdkfj
+    path: "/tmp/{{ tower_installer }}/inventory"
+    regex: "{{ item }}'"
+    line: "{{ item }}awx123'"
+  loop:
+    - "admin_password='"
+    - "pg_password='"
+    - "rabbitmq_password='"
+
+- name: setup execute rights on setup
+  file:
+    mode: '+x'
+    path: "/tmp/{{ tower_installer }}/setup.sh"
+
 
 - name: install Tower
-  shell: "exec /tmp/{{ tower_installer }}/bin/setup.sh"
+  shell: "exec /tmp/{{ tower_installer }}/setup.sh"

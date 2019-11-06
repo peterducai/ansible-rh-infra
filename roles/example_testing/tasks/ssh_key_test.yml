@@ -1,0 +1,28 @@
+---
+- hosts: all
+  connection: local
+  tasks:
+
+  - name: gen rsa key
+    command: ssh-keygen -t rsa -b 2048 -f ~/.ssh/example_rsa_2k
+    ignore_errors: yes
+
+  - name: gen rsa key
+    command: ssh-keygen -t rsa -b 4096 -f ~/.ssh/example_rsa_4k
+    ignore_errors: yes
+
+  - name: gen ed key
+    command: ssh-keygen -t ed25519 -b 256 -f ~/.ssh/example_ed
+    ignore_errors: yes
+
+
+  - name: check keys
+    command: ssh-keygen -l -f {{item}}
+    loop:
+      - ~/.ssh/example_rsa_2k.pub
+      - ~/.ssh/example_rsa_4k.pub
+      - ~/.ssh/example_ed.pub
+    register: sshout
+    failed_when: >
+      not (("4096 " in sshout.stdout) or
+      ("ED25519" in sshout.stdout))

@@ -1,7 +1,7 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+ansible-playbook --connection=local --inventory 127.0.0.1, plassh_key_test.yml
 
 Requirements
 ------------
